@@ -54,6 +54,7 @@ try(gs4_auth(
   )
 ))
 
+
 #Importación   --------------------------------------------------------
 # data <- read_sheet("1jdtuSyTAYUH1drZDpKhyVM7OLlNfz-UiaWxhNPN0MII")
 # principal <- read_sheet("1QHoMDBYt3PIum25vvC7LSkb0mexLSRACJW-kgg9zols")
@@ -163,7 +164,7 @@ tema_general_hc <- hc_theme_merge(
 Home
 ========================================================================
 
-Row {data-height=150}
+Row: Tarjetas {data-height=150}
 -----------------------------------------------------------------------
 
 
@@ -225,7 +226,7 @@ layout_column_wrap(
 ```
 
 
-Row {data-height=420}
+Row: Respuestas {data-height=420}
 -----------------------------------------------------------------------
 
 
@@ -241,7 +242,7 @@ layout_column_wrap(
   height = 410,
   navset_card_pill(
   full_screen = TRUE,
-  title = tags$div("Tendencia de Respuestas Diarias", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
+  title = tags$div("Tendencia de respuestas diarias", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(
     title = tags$div("Global", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"), 
     respuestas_diario %>% 
@@ -285,15 +286,17 @@ layout_column_wrap(
 ```
 
 
-Row {data-height=350}
+Row {data-height=420}
 -----------------------------------------------------------------------
 
-```{r Respuestas por Genero }
+```{r respuestas por Genero Calculos, include=FALSE}
 
-layout_column_wrap(
+genero_global <- layout_column_wrap(
   width = NULL,
   style = css(grid_template_columns = "1fr 2fr"),
-  height = 340,
+  height = 410,
+  fillable = TRUE,
+  gap = 2,
   card(
     full_screen = TRUE,
     card_body(
@@ -339,22 +342,298 @@ layout_column_wrap(
         ) %>% 
       hc_add_theme(tema_general_hc) %>% 
       hc_exporting(enabled = TRUE)
-
   ))
 )
+
+genero_elsalvador <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,genero) %>% 
+      count() %>% 
+      filter(pais =="El Salvador") %>% 
+      hchart(type="pie",hcaes(x=genero,y=n),name="Género") %>% 
+      hc_title(text="Respuestas por Género El Salvador")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,genero) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="El Salvador") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = genero)) %>%
+      hc_title(text = "Respuestas por Género El Salvador") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+genero_guatemala <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,genero) %>% 
+      count() %>% 
+      filter(pais =="Guatemala") %>% 
+      hchart(type="pie",hcaes(x=genero,y=n),name="Género") %>% 
+      hc_title(text="Respuestas por Género Guatemala")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,genero) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Guatemala") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = genero)) %>%
+      hc_title(text = "Respuestas por Género Guatemala") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+genero_honduras <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,genero) %>% 
+      count() %>% 
+      filter(pais =="Honduras") %>% 
+      hchart(type="pie",hcaes(x=genero,y=n),name="Género") %>% 
+      hc_title(text="Respuestas por Género Honduras")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,genero) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Honduras") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = genero)) %>%
+      hc_title(text = "Respuestas por Género Honduras") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+genero_nicaragua <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,genero) %>% 
+      count() %>% 
+      filter(pais =="Nicaragua") %>% 
+      hchart(type="pie",hcaes(x=genero,y=n),name="Género") %>% 
+      hc_title(text="Respuestas por Género Nicaragua")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,genero) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Nicaragua") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = genero)) %>%
+      hc_title(text = "Respuestas por Género Nicaragua") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+genero_costarica <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,genero) %>% 
+      count() %>% 
+      filter(pais =="Costa Rica") %>% 
+      hchart(type="pie",hcaes(x=genero,y=n),name="Género") %>% 
+      hc_title(text="Respuestas por Género Costa Rica")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,genero) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Costa Rica") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = genero)) %>%
+      hc_title(text = "Respuestas por Género Costa Rica") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
 
 ```
 
 
-Row {data-height=350}
+
+```{r Respuestas por Genero }
+
+navset_card_pill(
+  nav_panel(title = "Global",
+            genero_global
+  ),
+  nav_menu(title = "Países",
+    nav_panel(title = "Guatemala",
+            genero_guatemala),
+    nav_panel(title = "El Salvador",
+            genero_elsalvador),
+    nav_panel(title = "Honduras",
+            genero_honduras),
+    nav_panel(title = "Nicaragua",
+            genero_nicaragua),
+    nav_panel(title = "Costa Rica",
+            genero_costarica)
+))
+
+
+```
+
+
+Row {data-height=420}
 -----------------------------------------------------------------------
 
-```{r Respuestas por Jerarquia }
+```{r respuestas por Jerarquia Calculos, include=FALSE}
 
-layout_column_wrap(
+jerarquia_global <- layout_column_wrap(
   width = NULL,
   style = css(grid_template_columns = "1fr 2fr"),
-  height = 340,
+  height = 410,
+  fillable = TRUE,
+  gap = 2,
   card(
     full_screen = TRUE,
     card_body(
@@ -400,22 +679,296 @@ layout_column_wrap(
         ) %>% 
       hc_add_theme(tema_general_hc) %>% 
       hc_exporting(enabled = TRUE)
-
   ))
 )
+
+jerarquia_elsalvador <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,nivel_jerarquico) %>% 
+      count() %>% 
+      filter(pais =="El Salvador") %>% 
+      hchart(type="pie",hcaes(x=nivel_jerarquico,y=n),name="Nivel Jerárquico") %>% 
+      hc_title(text="Respuestas por Nivel Jerárquico El Salvador")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,nivel_jerarquico) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="El Salvador") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = nivel_jerarquico)) %>%
+      hc_title(text = "Respuestas por Nivel Jerárquico El Salvador") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+jerarquia_guatemala <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,nivel_jerarquico) %>% 
+      count() %>% 
+      filter(pais =="Guatemala") %>% 
+      hchart(type="pie",hcaes(x=nivel_jerarquico,y=n),name="Nivel Jerárquico") %>% 
+      hc_title(text="Respuestas por Nivel Jerárquico Guatemala")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,nivel_jerarquico) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Guatemala") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = nivel_jerarquico)) %>%
+      hc_title(text = "Respuestas por Nivel Jerárquico Guatemala") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+jerarquia_honduras <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,nivel_jerarquico) %>% 
+      count() %>% 
+      filter(pais =="Honduras") %>% 
+      hchart(type="pie",hcaes(x=nivel_jerarquico,y=n),name="Nivel Jerárquico") %>% 
+      hc_title(text="Respuestas por Nivel Jerárquico Honduras")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,nivel_jerarquico) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Honduras") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = nivel_jerarquico)) %>%
+      hc_title(text = "Respuestas por Nivel Jerárquico Honduras") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+jerarquia_nicaragua <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,nivel_jerarquico) %>% 
+      count() %>% 
+      filter(pais =="Nicaragua") %>% 
+      hchart(type="pie",hcaes(x=nivel_jerarquico,y=n),name="Nivel Jerárquico") %>% 
+      hc_title(text="Respuestas por Nivel Jerárquico Nicaragua")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,nivel_jerarquico) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Nicaragua") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = nivel_jerarquico)) %>%
+      hc_title(text = "Respuestas por Nivel Jerárquico Nicaragua") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+jerarquia_costarica <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,nivel_jerarquico) %>% 
+      count() %>% 
+      filter(pais =="Costa Rica") %>% 
+      hchart(type="pie",hcaes(x=nivel_jerarquico,y=n),name="Nivel Jerárquico") %>% 
+      hc_title(text="Respuestas por Nivel Jerárquico Costa Rica")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,nivel_jerarquico) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Costa Rica") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = nivel_jerarquico)) %>%
+      hc_title(text = "Respuestas por Nivel Jerárquico Costa Rica") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
 
 ```
 
 
-Row {data-height=350}
+```{r Respuestas por Jerarquia }
+
+navset_card_pill(
+  nav_panel(title = "Global",
+            jerarquia_global
+  ),
+  nav_menu(title = "Países",
+    nav_panel(title = "Guatemala",
+            jerarquia_guatemala),
+    nav_panel(title = "El Salvador",
+            jerarquia_elsalvador),
+    nav_panel(title = "Honduras",
+            jerarquia_honduras),
+    nav_panel(title = "Nicaragua",
+            jerarquia_nicaragua),
+    nav_panel(title = "Costa Rica",
+            jerarquia_costarica)
+))
+
+```
+
+
+Row {data-height=420}
 -----------------------------------------------------------------------
 
-```{r Respuestas por Tiempo Laboral}
+```{r respuestas por Tiempo Laboral Calculos, include=FALSE}
 
-layout_column_wrap(
+tlaboral_global <- layout_column_wrap(
   width = NULL,
   style = css(grid_template_columns = "1fr 2fr"),
-  height = 340,
+  height = 410,
+  fillable = TRUE,
+  gap = 2,
   card(
     full_screen = TRUE,
     card_body(
@@ -465,18 +1018,293 @@ layout_column_wrap(
   ))
 )
 
+tlaboral_elsalvador <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,tiempo_laboral) %>% 
+      count() %>% 
+      filter(pais =="El Salvador") %>% 
+      hchart(type="pie",hcaes(x=tiempo_laboral,y=n),name="Tiempo de Trabajo") %>% 
+      hc_title(text="Respuestas por Tiempo de Trabajo El Salvador")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,tiempo_laboral) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="El Salvador") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = tiempo_laboral)) %>%
+      hc_title(text = "Respuestas por Tiempo de Trabajo El Salvador") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+tlaboral_guatemala <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,tiempo_laboral) %>% 
+      count() %>% 
+      filter(pais =="Guatemala") %>% 
+      hchart(type="pie",hcaes(x=tiempo_laboral,y=n),name="Tiempo de Trabajo") %>% 
+      hc_title(text="Respuestas por Tiempo de Trabajo Guatemala")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,tiempo_laboral) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Guatemala") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = tiempo_laboral)) %>%
+      hc_title(text = "Respuestas por Tiempo de Trabajo Guatemala") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+tlaboral_honduras <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,tiempo_laboral) %>% 
+      count() %>% 
+      filter(pais =="Honduras") %>% 
+      hchart(type="pie",hcaes(x=tiempo_laboral,y=n),name="Tiempo de Trabajo") %>% 
+      hc_title(text="Respuestas por Tiempo de Trabajo Honduras")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,tiempo_laboral) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Honduras") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = tiempo_laboral)) %>%
+      hc_title(text = "Respuestas por Tiempo de Trabajo Honduras") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+tlaboral_nicaragua <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,tiempo_laboral) %>% 
+      count() %>% 
+      filter(pais =="Nicaragua") %>% 
+      hchart(type="pie",hcaes(x=tiempo_laboral,y=n),name="Tiempo de Trabajo") %>% 
+      hc_title(text="Respuestas por Tiempo de Trabajo Nicaragua")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,tiempo_laboral) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Nicaragua") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = tiempo_laboral)) %>%
+      hc_title(text = "Respuestas por Tiempo de Trabajo Nicaragua") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+tlaboral_costarica <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,tiempo_laboral) %>% 
+      count() %>% 
+      filter(pais =="Costa Rica") %>% 
+      hchart(type="pie",hcaes(x=tiempo_laboral,y=n),name="Tiempo de Trabajo") %>% 
+      hc_title(text="Respuestas por Tiempo de Trabajo Costa Rica")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,tiempo_laboral) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Costa Rica") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = tiempo_laboral)) %>%
+      hc_title(text = "Respuestas por Tiempo de Trabajo Costa Rica") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+
 ```
 
 
-Row {data-height=350}
+```{r Respuestas por Tiempo Laboral}
+
+navset_card_pill(
+  nav_panel(title = "Global",
+            tlaboral_global
+  ),
+  nav_menu(title = "Países",
+    nav_panel(title = "Guatemala",
+            tlaboral_guatemala),
+    nav_panel(title = "El Salvador",
+            tlaboral_elsalvador),
+    nav_panel(title = "Honduras",
+            tlaboral_honduras),
+    nav_panel(title = "Nicaragua",
+            tlaboral_nicaragua),
+    nav_panel(title = "Costa Rica",
+            tlaboral_costarica)
+))
+
+```
+
+
+Row {data-height=420}
 -----------------------------------------------------------------------
 
-```{r Respuestas por Generacion}
+```{r respuestas por Generacion Calculos, include=FALSE}
 
-layout_column_wrap(
+generacion_global <- layout_column_wrap(
   width = NULL,
   style = css(grid_template_columns = "1fr 2fr"),
-  height = 340,
+  height = 410,
+  fillable = TRUE,
+  gap = 2,
   card(
     full_screen = TRUE,
     card_body(
@@ -525,6 +1353,279 @@ layout_column_wrap(
 
   ))
 )
+
+generacion_elsalvador <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,generacion) %>% 
+      count() %>% 
+      filter(pais =="El Salvador") %>% 
+      hchart(type="pie",hcaes(x=generacion,y=n),name="Generación") %>% 
+      hc_title(text="Respuestas por Generación El Salvador")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,generacion) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="El Salvador") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = generacion)) %>%
+      hc_title(text = "Respuestas por Generación El Salvador") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+generacion_guatemala <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,generacion) %>% 
+      count() %>% 
+      filter(pais =="Guatemala") %>% 
+      hchart(type="pie",hcaes(x=generacion,y=n),name="Generación") %>% 
+      hc_title(text="Respuestas por Generación Guatemala")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,generacion) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Guatemala") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = generacion)) %>%
+      hc_title(text = "Respuestas por Generación Guatemala") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+generacion_honduras <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,generacion) %>% 
+      count() %>% 
+      filter(pais =="Honduras") %>% 
+      hchart(type="pie",hcaes(x=generacion,y=n),name="Generación") %>% 
+      hc_title(text="Respuestas por Generación Honduras")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,generacion) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Honduras") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = generacion)) %>%
+      hc_title(text = "Respuestas por Generación Honduras") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+generacion_nicaragua <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,generacion) %>% 
+      count() %>% 
+      filter(pais =="Nicaragua") %>% 
+      hchart(type="pie",hcaes(x=generacion,y=n),name="Generación") %>% 
+      hc_title(text="Respuestas por Generación Nicaragua")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,generacion) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Nicaragua") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = generacion)) %>%
+      hc_title(text = "Respuestas por Generación Nicaragua") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+generacion_costarica <- layout_column_wrap(
+  width = NULL,
+  style = css(grid_template_columns = "1fr 2fr"),
+  height = 410,
+  card(
+    full_screen = TRUE,
+    card_body(
+      full_data %>% 
+      group_by(pais,generacion) %>% 
+      count() %>% 
+      filter(pais =="Costa Rica") %>% 
+      hchart(type="pie",hcaes(x=generacion,y=n),name="Generación") %>% 
+      hc_title(text="Respuestas por Generación Costa Rica")%>%
+      # hc_subtitle(text="") %>%
+      hc_plotOptions(pie=list(
+        innerSize="55%",
+        tooltip=list(pointFormat="{point.y:,.0f} ({point.percentage:.0f}%)"),
+        dataLabels=list(enabled=TRUE,
+                        format="{point.name}</br>{point.y:,.0f} ({point.percentage:.0f}%)"))
+        )%>%
+      hc_yAxis(title=list(text=""))%>%
+      hc_xAxis(title=list(text=""))%>%
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled=TRUE)
+  )),
+  card(
+    full_screen = TRUE,
+    card_body(
+     full_data %>%
+      group_by(dias= floor_date(fecha, "day"),pais,generacion) %>%
+      count() %>% 
+      ungroup() %>% 
+      filter(pais =="Costa Rica") %>% 
+      mutate(tiempo = dias %>% datetime_to_timestamp()) %>% 
+      hchart("spline", hcaes(x = tiempo, y = n, group = generacion)) %>%
+      hc_title(text = "Respuestas por Generación Costa Rica") %>%
+      hc_subtitle(text = "Tendencia diaria") %>% 
+      hc_xAxis(type = "datetime", labels = list(format = "{value:%d-%b}"), title = list(text = "")) %>% 
+      hc_yAxis(title = list(text = "Cantidad de Respuestas")) %>%
+      hc_plotOptions(spline = list(
+        lineWidth = 2,
+        states = list(hover = list(lineWidth = 5)), #resalta la linea al pasar el mouse
+        marker = list(enabled = FALSE),
+        dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.y:.0f}</span>"))
+        ) %>% 
+      hc_add_theme(tema_general_hc) %>% 
+      hc_exporting(enabled = TRUE)
+  ))
+)
+
+
+```
+
+
+```{r Respuestas por Generacion}
+
+navset_card_pill(
+  nav_panel(title = "Global",
+            generacion_global
+  ),
+  nav_menu(title = "Países",
+    nav_panel(title = "Guatemala",
+            generacion_guatemala),
+    nav_panel(title = "El Salvador",
+            generacion_elsalvador),
+    nav_panel(title = "Honduras",
+            generacion_honduras),
+    nav_panel(title = "Nicaragua",
+            generacion_nicaragua),
+    nav_panel(title = "Costa Rica",
+            generacion_costarica)
+))
 
 ```
 
@@ -667,9 +1768,9 @@ card(
           ),
           theme = reactableTheme(
             highlightColor = "#CCE0FF",
-            headerStyle = list(fontSize="10px"),
+            headerStyle = list(fontSize="14px"),
             cellStyle = list(fontSize="12px"),
-            style = list(fontFamily = "Roboto Condensed")
+            style = list(fontFamily = "Nunito")
              ),
           class = "packages-table",
         )

@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=fallback');
+
 .nav-pills {
   justify-content: flex-end !important;
 }
@@ -16,4 +18,9 @@
   border-bottom-color: hsl(213, 33%, 93%);
   border-bottom-width: 1px;
   color: hsl(213, 13%, 33%);
+}
+
+.card-body {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
 }
