@@ -1,5 +1,5 @@
 ---
-title: "LACTOLAC - Contador"
+title: "Contador"
 author: "[2026]"
 output: 
   flexdashboard::flex_dashboard:
