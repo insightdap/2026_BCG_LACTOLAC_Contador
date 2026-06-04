@@ -1277,7 +1277,7 @@ tlaboral_costarica <- layout_column_wrap(
 ```{r Respuestas por Tiempo Laboral}
 
 navset_card_pill(
-  title = tags$div("Respuestas por Tiempo Laboral", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
+  title = tags$div("Respuestas por Tiempo de Trabajo", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(title = "Global",
             tlaboral_global
   ),
