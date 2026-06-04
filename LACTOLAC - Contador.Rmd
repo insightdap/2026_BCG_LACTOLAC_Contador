@@ -242,7 +242,7 @@ layout_column_wrap(
   height = 410,
   navset_card_pill(
   full_screen = TRUE,
-  title = tags$div("Tendencia de respuestas diarias", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
+  title = tags$div("Tendencia diaria", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(
     title = tags$div("Global", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"), 
     respuestas_diario %>% 
@@ -603,6 +603,7 @@ genero_costarica <- layout_column_wrap(
 ```{r Respuestas por Genero }
 
 navset_card_pill(
+  title = tags$div("Respuestas por Género", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(title = "Global",
             genero_global
   ),
@@ -939,6 +940,7 @@ jerarquia_costarica <- layout_column_wrap(
 ```{r Respuestas por Jerarquia }
 
 navset_card_pill(
+  title = tags$div("Respuestas por Jerarquía", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(title = "Global",
             jerarquia_global
   ),
@@ -1275,6 +1277,7 @@ tlaboral_costarica <- layout_column_wrap(
 ```{r Respuestas por Tiempo Laboral}
 
 navset_card_pill(
+  title = tags$div("Respuestas por Tiempo Laboral", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(title = "Global",
             tlaboral_global
   ),
@@ -1611,6 +1614,7 @@ generacion_costarica <- layout_column_wrap(
 ```{r Respuestas por Generacion}
 
 navset_card_pill(
+  title = tags$div("Respuestas por Generación", style = "font-size: 16px; padding-top: 2px; padding-bottom: 2px;"),
   nav_panel(title = "Global",
             generacion_global
   ),
