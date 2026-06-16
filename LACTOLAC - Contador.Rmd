@@ -62,31 +62,55 @@ data1 <- read_sheet("1_TXKJTVLJiq1Pn2g2sEg0W8YPViTvKfwLzPRisGyfu8") %>%  #El Sal
   mutate(pais = "El Salvador",
          fecha = `Submitted at`- hours(6)) %>% 
   relocate(pais, .before = `Submitted at`) %>% 
-  relocate(fecha, .after = `Submitted at`)
+  relocate(fecha, .after = `Submitted at`) %>% 
+  rename("area1" = `A. ¿A qué dirección perteneces?`,
+         "area2" = `B. ¿A qué departamento perteneces?`,
+         "area3" = `C. ¿A qué área de trabajo perteneces?`,
+         "area4" = `D. ¿A qué lugar de trabajo perteneces?`)
   
 data2 <- read_sheet("1dHIWxjF396Xbx9I-pRzjsi8_card23Ere5YTEhZIR44") %>%   #Guatemala
   mutate(pais = "Guatemala",
          fecha = `Submitted at`- hours(6)) %>% 
   relocate(pais, .before = `Submitted at`) %>% 
-  relocate(fecha, .after = `Submitted at`)
+  relocate(fecha, .after = `Submitted at`) %>% 
+  rename("area1" = `A. ¿A qué dirección perteneces?`,
+         "area3" = `B. ¿A qué área de trabajo perteneces?`,
+         "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
+  mutate(area2 = NA) %>% 
+  relocate(area2,.after = area1)
 
 data3 <- read_sheet("14T4qo89Rsf0UYTCFY23q-IE-tFq9utfYY2zOA6nijVE") %>%   #Honduras
   mutate(pais = "Honduras",
          fecha = `Submitted at`- hours(6)) %>% 
   relocate(pais, .before = `Submitted at`) %>% 
-  relocate(fecha, .after = `Submitted at`)
+  relocate(fecha, .after = `Submitted at`) %>% 
+  rename("area1" = `A. ¿A qué dirección perteneces?`,
+         "area3" = `B. ¿A qué área de trabajo perteneces?`,
+         "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
+  mutate(area2 = NA) %>% 
+  relocate(area2,.after = area1)
 
 data4 <- read_sheet("1RKGlMXP_NPAbD_O5FyC3FCqRLBgzkQfnhLyVtxscw8A") %>%   #Nicaragua
   mutate(pais = "Nicaragua",
          fecha = `Submitted at`- hours(6)) %>% 
   relocate(pais, .before = `Submitted at`) %>% 
-  relocate(fecha, .after = `Submitted at`)
+  relocate(fecha, .after = `Submitted at`) %>% 
+  rename("area1" = `A. ¿A qué dirección perteneces?`,
+         "area3" = `B. ¿A qué área de trabajo perteneces?`,
+         "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
+  mutate(area2 = NA) %>% 
+  relocate(area2,.after = area1)
 
 data5 <- read_sheet("1MtaNcJaJB-gE9B7pV7WWovLsbbz2m6tWgiCS5cr-vLQ") %>%   #Costa Rica
     mutate(pais = "Costa Rica",
          fecha = `Submitted at`- hours(6)) %>% 
   relocate(pais, .before = `Submitted at`) %>% 
-  relocate(fecha, .after = `Submitted at`)
+  relocate(fecha, .after = `Submitted at`) %>% 
+  rename("area1" = `A. ¿A qué dirección perteneces?`,
+         "area3" = `B. ¿A qué área de trabajo perteneces?`,
+         "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
+  mutate(area2 = NA) %>% 
+  relocate(area2,.after = area1)
 
 ultima_actualizacion <- Sys.time()
 
@@ -1735,11 +1759,11 @@ Row {data-height=550}
 ```{r}
 
 #Renombre de variables
-full_data <- full_data %>% 
-  rename("area1" = `A. ¿A qué dirección perteneces?`,
-         "area2" = `B. ¿A qué departamento perteneces?`,
-         "area3" = `C. ¿A qué centro de costo perteneces?`,
-         "area4" = `D. ¿A qué lugar de trabajo perteneces?`)
+# full_data <- full_data %>% 
+#   rename("area1" = `A. ¿A qué dirección perteneces?`,
+#          "area2" = `B. ¿A qué departamento perteneces?`,
+#          "area3" = `C. ¿A qué centro de costo perteneces?`,
+#          "area4" = `D. ¿A qué lugar de trabajo perteneces?`)
 
 
 card(
@@ -1749,9 +1773,9 @@ card(
   card_body(
     div(
       class = "title_reactable",
-      h3("Respuestas por Dirección y Departamento"),
+      h3("Respuestas por Dirección y Área de Trabajo"),
       full_data %>% 
-        group_by(pais,area1, area2) %>% 
+        group_by(pais,area1, area3) %>% 
         summarise(respuestas = n(), .groups = "drop") %>% 
         reactable(
           highlight = TRUE,
@@ -1763,7 +1787,7 @@ card(
           columns = list(
             pais = colDef(name = "País"),
             area1 = colDef(name = "Dirección"),
-            area2 = colDef(name = "Departamento"),
+            area3 = colDef(name = "Área de Trabajo"),
             respuestas = colDef(name = "Respuestas",
                                 aggregate = "sum",
                                 format = colFormat(sep = TRUE,locales = "en-US"),
