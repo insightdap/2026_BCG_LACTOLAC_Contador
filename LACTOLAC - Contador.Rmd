@@ -77,7 +77,9 @@ data2 <- read_sheet("1dHIWxjF396Xbx9I-pRzjsi8_card23Ere5YTEhZIR44") %>%   #Guate
          "area3" = `B. ¿A qué área de trabajo perteneces?`,
          "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
   mutate(area2 = NA) %>% 
-  relocate(area2,.after = area1)
+  relocate(area2,.after = area1) %>% 
+  mutate(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos` = as.character(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos`),
+         `2. ¿Qué recomendaría para mejorar algún aspecto de la cultura laboral? Comparte ejemplos` = as.character(`2. ¿Qué recomendaría para mejorar algún aspecto de la cultura laboral? Comparte ejemplos`))
 
 data3 <- read_sheet("14T4qo89Rsf0UYTCFY23q-IE-tFq9utfYY2zOA6nijVE") %>%   #Honduras
   mutate(pais = "Honduras",
@@ -99,7 +101,8 @@ data4 <- read_sheet("1RKGlMXP_NPAbD_O5FyC3FCqRLBgzkQfnhLyVtxscw8A") %>%   #Nicar
          "area3" = `B. ¿A qué área de trabajo perteneces?`,
          "area4" = `C. ¿A qué lugar de trabajo perteneces?`) %>% 
   mutate(area2 = NA) %>% 
-  relocate(area2,.after = area1)
+  relocate(area2,.after = area1) %>% 
+  mutate(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos` = as.character(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos`))
 
 data5 <- read_sheet("1MtaNcJaJB-gE9B7pV7WWovLsbbz2m6tWgiCS5cr-vLQ") %>%   #Costa Rica
     mutate(pais = "Costa Rica",
