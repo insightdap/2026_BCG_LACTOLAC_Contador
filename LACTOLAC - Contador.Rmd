@@ -66,7 +66,9 @@ data1 <- read_sheet("1_TXKJTVLJiq1Pn2g2sEg0W8YPViTvKfwLzPRisGyfu8") %>%  #El Sal
   rename("area1" = `A. ¿A qué dirección perteneces?`,
          "area2" = `B. ¿A qué departamento perteneces?`,
          "area3" = `C. ¿A qué área de trabajo perteneces?`,
-         "area4" = `D. ¿A qué lugar de trabajo perteneces?`)
+         "area4" = `D. ¿A qué lugar de trabajo perteneces?`) %>% 
+  mutate(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos` = as.character(`1. ¿Existen acciones o prácticas en Lactolac que contribuyan a una mejor cultura laboral? Comparte ejemplos`),
+         `2. ¿Qué recomendaría para mejorar algún aspecto de la cultura laboral? Comparte ejemplos` = as.character(`2. ¿Qué recomendaría para mejorar algún aspecto de la cultura laboral? Comparte ejemplos`))
   
 data2 <- read_sheet("1dHIWxjF396Xbx9I-pRzjsi8_card23Ere5YTEhZIR44") %>%   #Guatemala
   mutate(pais = "Guatemala",
