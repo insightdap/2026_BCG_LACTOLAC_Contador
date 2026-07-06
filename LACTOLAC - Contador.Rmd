@@ -1670,14 +1670,6 @@ Row {data-height=450}
 
 ```{r Avance por Pais}
 
-# contador_area <- principal %>% 
-#   filter(!is.na(area1)) %>% # Evitar vacios
-#   group_by(area1,estado) %>% 
-#   summarise(respuestas = n()) %>% 
-#   mutate(prop = round(respuestas/sum(respuestas)*100,0)) %>%
-#   pivot_wider(names_from = estado, values_from = c(respuestas,prop), values_fill = 0) %>% 
-#   mutate(total_respuestas = rowSums(across(starts_with("respuestas"))),
-#          total_prop = rowSums(across(starts_with("prop"))))
 
 contador_pais <- full_data %>% 
   group_by(pais) %>% 
@@ -1708,6 +1700,71 @@ layout_column_wrap(
                   tooltip = list(pointFormat = "<span style='color:{point.color}'>●</span> {series.name}: <b>{point.z:,.0f}
                ({point.y:.0f}%)</b> <br> MoE: <b>{point.moe:.0f}% </b>"))  %>%
     hc_title(text = "Avance de Respuestas por País") %>%
+    # hc_subtitle(text = "Frecuencias por Nivel de Respuesta") %>%
+    hc_xAxis(title = list(text = "")) %>% 
+    hc_yAxis(title = list(text = "Porcentaje"),ceiling = 100, labels = list(format = "{text}%")) %>%
+    hc_colors(c("#EBEBEB"))%>%
+    hc_plotOptions(bar=list(
+      grouping = FALSE, 
+      # pointPadding = 0,      # SUPERPOSICIÓN TOTAL
+      pointPlacement = 0    # MISMA POSICIÓN EXACTA
+      # groupPadding = 0,      # MISMO GRUPO (sin separación)
+    )) %>%
+    # hc_tooltip(pointFormat = "<span style='color:{point.color}'>●</span> {series.name}: <b>{point.z:,.0f}
+    #            ({point.y:.0f}%)</b> <br> MoE: <b>{point.moe:.0f}% </b>") %>% 
+    hc_scrollbar(enabled = TRUE) %>% 
+    hc_add_theme(tema_general_hc) %>% 
+    hc_exporting(enabled = TRUE)
+  ))
+)
+
+```
+
+
+Row {data-height=450}
+-----------------------------------------------------------------------
+
+
+```{r Avance por Direccion}
+
+principal_area1 <- read_sheet("1d33PzU6NBnrB-dJGP84zkKA0G5UryoRVSVF1a5NOIYU",sheet = "area1") 
+
+avance_area1 <- full_data %>% 
+  group_by(pais,area1) %>% 
+  summarise(completado = n(), .groups = "drop") %>% 
+  mutate(key = paste0(pais," - ",area1))
+
+contador_area1 <- principal_area1 %>% 
+  left_join(
+    avance_area1 %>% 
+      select(key,completado),
+    by = "key"
+  ) %>% 
+  mutate(pendiente = total - completado) %>% 
+  mutate(prop_completado = round(completado/total*100,0),
+         prop_pendiente = round(pendiente/total*100,0)) %>% 
+  mutate(moe = round(margen_error_pct(completado, 
+                       N = total),digits = 2))
+
+layout_column_wrap(
+  width = 1,
+  height = 440,
+  card(
+  full_screen = TRUE,
+  card_body(
+   contador_area1 %>% 
+    hchart("bar", hcaes(x = key, y = 100, z = total, moe = moe), name = "Población", showInLegend = TRUE,
+           borderRadius = 10,
+           dataLabels=list(enabled=TRUE, format="{point.z:.0f}"),
+           tooltip = list(pointFormat = "<span style='color:{point.color}'>●</span> {series.name}: <b>{point.z:,.0f}
+               ({point.y:.0f}%)</b>")) %>%
+    hc_add_series(type = "bar",data = contador_area1,hcaes(x = key, y = prop_completado, z = completado),
+                  name = "Completado", color = "#29BEB4",showInLegend = TRUE,
+                  borderRadius = 10,
+                  dataLabels=list(enabled=TRUE, format="<span style='color:{series.color}'>{point.z:.0f} ({point.y:.0f}%)</span>"),
+                  tooltip = list(pointFormat = "<span style='color:{point.color}'>●</span> {series.name}: <b>{point.z:,.0f}
+               ({point.y:.0f}%)</b>"))  %>%
+    hc_title(text = "Avance de Respuestas por Dirección") %>%
     # hc_subtitle(text = "Frecuencias por Nivel de Respuesta") %>%
     hc_xAxis(title = list(text = "")) %>% 
     hc_yAxis(title = list(text = "Porcentaje"),ceiling = 100, labels = list(format = "{text}%")) %>%
