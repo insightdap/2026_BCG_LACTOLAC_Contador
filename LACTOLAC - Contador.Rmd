@@ -242,7 +242,7 @@ layout_column_wrap(
     theme = value_box_theme(bg = "#FFF", fg = "#29BEB4")),
   value_box(
     h1("Avance", style = "font-size: 18px; font-weight: bold; font-family: Roboto;"),
-    value = paste(round(respuestas_totales$n / sum(total_pais$total),2),"%"),
+    value = paste(round(respuestas_totales$n / sum(total_pais$total)*100,2),"%"),
     showcase = bs_icon("stars"),
     theme = value_box_theme(bg = "#FFF", fg = "#29BEB4")),
     value_box(
